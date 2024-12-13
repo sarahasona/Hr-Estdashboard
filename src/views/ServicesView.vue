@@ -116,16 +116,41 @@ const handleDeleteAll = async () => {
     isLoading.value = false;
   }
 };
-const handleEditService = (service) => {
-  console.log(service);
-  const target = serviceList.value.find((ele) => ele._id === service.id);
-  console.log(target);
-  if (target) {
-    Object.assign(target, {
-      title: service.title,
-      description: service.description,
-      image: service.image,
-    });
+const handleEditService = async (service) => {
+  try {
+    isLoading.value = true;
+    const formData = createFormData(service);
+    const response = await axios.patch(
+      `https://dashboard-omega-three-28.vercel.app/Service/${service._id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response);
+    if (response.status === 200) {
+      const data = response.data.data
+      toast.success("تم التعديل بنجاح");
+      console.log(service);
+      const target = serviceList.value.find((ele) => ele._id === service._id);
+      console.log(target);
+      if (target) {
+        Object.assign(target, {
+          _id:service._id,
+          title: service.title,
+          description: service.description,
+          image: { secure_url: data.secure_url },
+        });
+      }
+    } else {
+      toast.warning("يرجي المحاوله مره اخري");
+    }
+    isLoading.value = false;
+  } catch (error) {
+    isLoading.value = false;
+    console.error(error.message);
   }
 };
 const handleDeleteService = async (serviceId) => {
