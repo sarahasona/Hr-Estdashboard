@@ -123,7 +123,7 @@
       v-else
       @click="showModal = true"
       type="button"
-      class="rounded-md bg-blue-500 hover:bg-blue-700 text-white py-2 px-4"
+      class="rounded-md bg-blue-500 hover:bg-blue-700 text-white p-2 ml-4"
     >
       {{ title }}
     </button>

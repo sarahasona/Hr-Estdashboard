@@ -2,34 +2,35 @@
   <div>
     <!-- BiMenu Icon (Visible only on small screens) -->
     <BiMenuAltLeft
-      
       @click="toggleSidebar"
       class="fixed top-4 left-1 z-40 text-blue-500 w-8 h-8 cursor-pointer lg:hidden"
     />
+
+    <!-- Backdrop -->
+    <div
+      v-if="sideBarOpen && isMobile"
+      @click="closeSidebar"
+      class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+    ></div>
 
     <!-- Sidebar -->
     <div
       :class="[
         'fixed top-0 left-0 h-screen bg-gray-100 border-r z-30 transition-transform duration-300',
-        sideBarOpen ? 'translate-x-0' : '-translate-x-full', // Control the sidebar visibility
+        sideBarOpen ? 'translate-x-0' : '-translate-x-full',
         'lg:translate-x-0', // Always visible on medium and larger screens
       ]"
       id="main-nav"
+      :aria-hidden="!sideBarOpen"
+      tabindex="0"
     >
       <!-- Sidebar Content -->
       <div
         class="w-full h-20 border-b flex px-4 items-center mb-8 text-center justify-center"
       >
-        <img src="/logo.png" alt="Logo" class="md:w-[50px] w-[20px] " />
-        <!-- Close Button for small screens -->
-        <button
-          @click="sideBarOpen = false"
-          class="absolute top-4 right-4 text-gray-500 md:hidden"
-        >
-          ✖
-        </button>
+        <img src="/logo.png" alt="Logo" class="md:w-[50px] w-[20px]" />
+       
       </div>
-
       <div class="mb-4 px-4" dir="rtl">
         <router-link to="about">
           <div
@@ -93,7 +94,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { BiMenuAltLeft } from "vue-icons-plus/bi"; 
+import { BiMenuAltLeft } from "vue-icons-plus/bi";
 
 const route = useRoute();
 
