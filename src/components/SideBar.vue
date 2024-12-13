@@ -29,7 +29,6 @@
         class="w-full h-20 border-b flex px-4 items-center mb-8 text-center justify-center"
       >
         <img src="/logo.png" alt="Logo" class="md:w-[50px] w-[20px]" />
-       
       </div>
       <div class="mb-4 px-4" dir="rtl">
         <router-link to="about">
@@ -92,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { BiMenuAltLeft } from "vue-icons-plus/bi";
 
@@ -100,11 +99,14 @@ const route = useRoute();
 
 // Control sidebar visibility
 const sideBarOpen = ref(false);
-
+const closeSidebar = () => {
+  sideBarOpen.value = false;
+};
 // Function to toggle the sidebar
 const toggleSidebar = () => {
   sideBarOpen.value = !sideBarOpen.value;
 };
+watch(() => route.path, closeSidebar);
 </script>
 
 <style scoped>
