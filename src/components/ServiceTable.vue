@@ -8,6 +8,7 @@
               v-if="head == 'Remove'"
               title="هل انت متاكد من حذف جميع الخدمات"
               @delete="handleDelete"
+              type="serviceAll"
             />
           </span>
           <h3 v-else dir="rlt" class="font-bold text-[20px]">{{ head }}</h3></fwb-table-head-cell

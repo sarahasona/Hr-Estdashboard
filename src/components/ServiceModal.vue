@@ -34,13 +34,31 @@
                       type="text"
                       class="border border-gray-200 w-full shadow p-2 outline-none mb-5"
                       v-model="localTitle"
+                      required
                     />
-                    <input
+                    <div
+                      class="text-red-500 text-xs sm:text-sm text-start mb-2"
+                      v-if="titleError"
+                    >
+                      {{ titleError }}
+                    </div>
+                    <textarea
                       placeholder="يرجي ادخال وصف الخدمه"
                       type="text"
-                      class="border border-gray-200 w-full shadow p-2 outline-none mb-5"
+                      class="border border-gray-200 w-full shadow p-2 outline-none mb-2"
                       v-model="localDescription"
+                      cols="10"
+                      rows="4"
+                      minlength="10"
+                      maxlength="600"
+                      required
                     />
+                    <div
+                      class="text-red-500 text-xs sm:text-sm text-start mb-2"
+                      v-if="descriptionError"
+                    >
+                      {{ descriptionError }}
+                    </div>
                   </div>
                   <!-- Offer Content Body -->
                   <div v-if="name === 'offer'">
@@ -48,7 +66,6 @@
                       :categoryList="categoryList"
                       @update="handleCategoryChange"
                       :selected="selectedCat"
-          
                     />
                   </div>
                   <div class="flex justify-start mt-5">
@@ -135,6 +152,8 @@ const { title, serviceObj, type, name, offerObj, categoryList } = defineProps([
   "offerObj",
   "categoryList",
 ]);
+const descriptionError = ref("");
+const titleError = ref("");
 const localTitle = ref("");
 const localDescription = ref("");
 const previewImage = ref("");
@@ -143,9 +162,9 @@ const selectedCat = ref("");
 if (name === "service") {
   localTitle.value = serviceObj.title || "";
   localDescription.value = serviceObj.description || "";
-  previewImage.value = serviceObj.image || "";
+  previewImage.value = serviceObj.image.secure_url || "";
 }
-console.log("name",name)
+console.log("name", name);
 // if (name == "offer") {
 //   console.log('offer')
 //   previewImage.value = offerObj.image.secure_url || "";
@@ -189,6 +208,8 @@ const resetFields = () => {
   previewImage.value = null;
   localTitle.value = "";
   localDescription.value = "";
+  descriptionError.value = "";
+  titleError.value = "";
 };
 const servicesApi = inject("servicesApi");
 const offerApi = inject("offerApi");
@@ -196,9 +217,20 @@ const offerApi = inject("offerApi");
 const addEditData = () => {
   if (name == "service") {
     if (!localTitle.value || !localDescription.value || !previewImage.value) {
-      toast.warning("يجب ادخال البيانات");
-      return;
+      if (localTitle.value.length < 2 || localTitle.value.length > 15) {
+        titleError.value = "العنوان يجب أن يكون بين 2 و 15 حروف";
+        return;
+      }
+      if (
+        localDescription.value.length < 10 ||
+        localDescription.value.length > 600
+      ) {
+        descriptionError.value = "الوصف يجب أن يكون بين 10 و 600 حروف";
+        return;
+      }
     }
+    titleError.value = "";
+    descriptionError.value = "";
     addService();
   } else if (name == "offer") {
     if (!previewImage.value || !selectedCat.value) {
@@ -212,10 +244,11 @@ const addEditData = () => {
 };
 const addService = () => {
   const payload = {
-    id: type === "add" ? new Date().valueOf() : serviceObj.id,
+    _id: type === "add" ? new Date().valueOf() : serviceObj._id,
     title: localTitle.value,
     description: localDescription.value,
     image: previewImage.value,
+    ImgFile:imageAsFile.value
   };
 
   // emit(type === "add" ? "addNewService" : "editService", payload);

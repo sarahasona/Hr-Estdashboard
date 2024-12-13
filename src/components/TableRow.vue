@@ -3,7 +3,7 @@
     <fwb-table-cell
       ><div class="flex gap-1 items-center">
         <img
-          :src="service.image"
+          :src="service?.image?.secure_url"
           class="w-[100px] h-[100px]"
           :alt="service.title"
         />
@@ -16,7 +16,7 @@
 
     <fwb-table-cell>
       <DeleteModal
-        :serviceId="service.id"
+        :serviceId="service._id"
         title="هل انت متاكد من حذف الخدمه"
         @delete="handleDeleteService"
         type="service"

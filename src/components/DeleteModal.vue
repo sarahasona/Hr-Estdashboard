@@ -52,12 +52,12 @@
 import { ref, defineEmits, inject } from "vue";
 import { BiTrash } from "vue-icons-plus/bi";
 import { FwbButton, FwbModal } from "flowbite-vue";
-const { serviceId, title, categoryId, type ,offerId} = defineProps([
+const { serviceId, title, categoryId, type, offerId } = defineProps([
   "serviceId",
   "title",
   "categoryId",
   "type",
-  "offerId"
+  "offerId",
 ]);
 const isShowModal = ref(false);
 const isDeleteLoading = ref(false);
@@ -71,17 +71,18 @@ function showModal() {
 
 const servicesApi = inject("servicesApi");
 const offerApi = inject("offerApi");
-const categoryApi = inject('removeCategory')
+const categoryApi = inject("removeCategory");
 const handleDelete = async () => {
   isDeleteLoading.value = true;
   if (type === "service") {
     servicesApi.deleteService(serviceId);
   } else if (type === "offerCategory") {
     // offerApi.deleteCategory(categoryId);
-    categoryApi(categoryId)
-  }
-  else if(type =="offer"){
+    categoryApi(categoryId);
+  } else if (type == "offer") {
     offerApi.deleteOffer(offerId);
+  } else if (type == "serviceAll") {
+    servicesApi.deleteAllServices();
   }
   isDeleteLoading.value = false;
   closeModal();

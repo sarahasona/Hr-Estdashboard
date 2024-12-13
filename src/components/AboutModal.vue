@@ -28,18 +28,22 @@
               <div class="mt-3 sm:mt-0 sm:ml-4">
                 <div class="mt-2 w-full">
                   <div>
-                    <input
-                      placeholder="يرجي ادخال العنوان"
-                      type="text"
-                      class="border border-gray-200 w-full shadow p-2 outline-none mb-5"
-                      v-model="localTitle"
-                    />
-                    <input
+                    <textarea
                       placeholder="يرجي ادخال الوصف"
-                      type="text"
-                      class="border border-gray-200 w-full shadow p-2 outline-none mb-5"
+                      class="border border-gray-200 w-full shadow p-2 outline-none mb-2"
                       v-model="localDescription"
+                      cols="10"
+                      rows="4"
+                      minlength="10"
+                      maxlength="600"
+                      required
                     />
+                    <div
+                      class="text-red-500 text-xs sm:text-sm text-start mb-2"
+                      v-if="descriptionError"
+                    >
+                      {{ descriptionError }}
+                    </div>
                     <div class="flex justify-start">
                       <input
                         type="file"
@@ -106,10 +110,9 @@
 <script setup>
 import { ref } from "vue";
 const { title, info, type } = defineProps(["title", "info", "type"]);
-console.log(info)
+console.log(info);
 const showModal = ref(false);
-const previewImage = ref(info.image || "");
-const localTitle = ref(info.title || "");
+const previewImage = ref(info.image.secure_url || "");
 const localDescription = ref(info.description || "");
 const saveImage = (e) => {
   console.log(e);
@@ -117,39 +120,51 @@ const saveImage = (e) => {
 const emit = defineEmits();
 const file = ref(null);
 const fileInput = ref(null);
+const ImgAsFile = ref(null);
 const handleImageUpload = (e) => {
   const Img = e.target.files[0];
   if (Img) {
     file.value = Img;
   }
   previewImage.value = URL.createObjectURL(file.value);
+  ImgAsFile.value = Img;
 };
 const closeModal = () => {
   showModal.value = false;
-  if(type=='add'){
+  if (type == "add") {
     resetFields();
   }
 };
 const resetFields = () => {
   previewImage.value = null;
-  localTitle.value = "";
   localDescription.value = "";
   file.value = null;
+  descriptionError.value = "";
 };
+const descriptionError = ref("");
 const addEditData = () => {
-  if (localTitle.value && localDescription.value && previewImage.value) {
-    emit("update-info", {
-      title: localTitle.value,
+  if (
+    localDescription.value.length < 10 ||
+    localDescription.value.length > 600
+  ) {
+    descriptionError.value =
+      "يجب أن تكون الوصف مكون من 10 حروف على الأقل و 600 حروف على الأكثر";
+    return;
+  }
+  if (previewImage.value) {
+    descriptionError.value = "";
+    const aboutData = {
+      _id: info._id,
       description: localDescription.value,
       image: previewImage.value,
-    });
+      type: type === "add" ? "add" : "edit",
+      ImgFile: ImgAsFile.value,
+    };
+    console.log(aboutData);
+    emit("update-info", aboutData);
+    type == "add" ? resetFields() : "";
+    showModal.value = false;
   }
-  if (type == "add") {
-    resetFields();
-  } else {
-    console.log("edit succsfully");
-  }
-  showModal.value = false;
 };
 </script>
 

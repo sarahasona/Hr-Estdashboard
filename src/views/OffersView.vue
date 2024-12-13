@@ -17,7 +17,7 @@
         name="offer"
       />
     </div>
-    <div class="offersWrapper">
+    <div class="offersWrapper" v-if="!isLoading">
       <div class="categoryList">
         <CategorySelect :categoryList="categoryList" class="w-[50%]" />
       </div>
@@ -40,6 +40,9 @@
       </div>
       <div v-if="OffersErrorMsg">{{ OfferErrorMsg }}</div>
     </div>
+    <div v-else class="flex justify-center items-center min-h-[400px] border">
+      <fwb-spinner size="10" color="blue" />
+    </div>
   </div>
 </template>
 
@@ -47,37 +50,20 @@
 <script setup>
 import { ref, provide, onMounted } from "vue";
 import { toast } from "vue3-toastify";
+import { FwbSpinner } from "flowbite-vue";
 import OfferCard from "@/components/OfferCard.vue";
 import CategorySelect from "@/components/CategorySelect.vue";
 import ServiceModal from "@/components/ServiceModal.vue";
 import axios from "axios";
+const isLoading = ref(false);
 const offerFilter = ref([]);
-// const offerList = ref([
-//   { _id: 1, image: { image_url: "/logo.png", public_id: 1 }, categoryId: 1 },
-//   { _id: 2, image: { image_url: "/logo.png", public_id: 2 }, categoryId: 1 },
-
-//   { _id: 3, image: { image_url: "/logo.png", public_id: 3 }, categoryId: 2 },
-
-//   { _id: 4, image: { image_url: "/logo.png", public_id: 4 }, categoryId: 2 },
-//   { _id: 5, image: { image_url: "/logo.png", public_id: 5 }, categoryId: 3 },
-//   { _id: 6, image: { image_url: "/logo.png", public_id: 6 }, categoryId: 3 },
-//   { _id: 7, image: { image_url: "/logo.png", public_id: 7 }, categoryId: 3 },
-// ]);
 const offerList = ref([]);
 offerFilter.value = offerList.value;
-// const categoryList = ref([
-//   { id: 1, title: "cameras" },
-//   { id: 2, title: "Black Friday" },
-//   { id: 3, title: "telphones" },
-// ]);
 const categoryList = ref([]);
 const createFormData = (ImgFile) => {
   const formData = new FormData();
   if (ImgFile instanceof File) {
     formData.append("image", ImgFile);
-  } else {
-    toast.warning("Invalid image object!");
-    return;
   }
   return formData;
 };
@@ -117,6 +103,8 @@ const handleDeleteAll = () => {
 };
 const handleEditOffer = async (offer) => {
   try {
+    console.log(offer);
+
     const formData = createFormData(offer.ImgFile);
     const response = await axios.patch(
       `https://dashboard-omega-three-28.vercel.app/offer/${offer._id}`,
@@ -128,7 +116,7 @@ const handleEditOffer = async (offer) => {
       }
     );
     if (response.status === 200) {
-      const data = response.data.data
+      const data = response.data.data;
       console.log(response.data.data);
       const target = offerList.value.find((ele) => ele._id === offer._id);
       if (target) {
@@ -185,6 +173,7 @@ provide("offerApi", {
 // get All Categories
 const getAllCategories = async () => {
   try {
+    isLoading.value = true;
     const response = await axios.get(
       "https://dashboard-omega-three-28.vercel.app/Category/all"
     );
@@ -195,7 +184,9 @@ const getAllCategories = async () => {
     } else {
       console.log(response.error);
     }
+    isLoading.value = false;
   } catch (err) {
+    isLoading.value = false;
     console.error(err.message);
   }
 };
@@ -211,18 +202,22 @@ const getCategoryOffers = () => {
 };
 const getCategoryOffersById = async (CatId) => {
   try {
+    isLoading.value = true;
     const response = await axios.get(
       `https://dashboard-omega-three-28.vercel.app/offer/categoryId=${CatId}`
     );
     if (response.status === 200) {
       console.log(response);
       offerList.value = response.data.data;
+      isLoading.value = false;
     } else {
       console.log(response.error);
       OffersErrorMsg.value = "لا يوجد عروض بهذا القسم";
+      isLoading.value = false;
     }
   } catch (err) {
     console.error(err.message);
+    isLoading.value = false;
     OffersErrorMsg.value = "حدث خطأ في البحث";
   }
 };
