@@ -110,13 +110,9 @@
 <script setup>
 import { ref } from "vue";
 const { title, info, type } = defineProps(["title", "info", "type"]);
-console.log(info);
 const showModal = ref(false);
 const previewImage = ref(info.image.secure_url || "");
 const localDescription = ref(info.description || "");
-const saveImage = (e) => {
-  console.log(e);
-};
 const emit = defineEmits();
 const file = ref(null);
 const fileInput = ref(null);
@@ -160,7 +156,6 @@ const addEditData = () => {
       type: type === "add" ? "add" : "edit",
       ImgFile: ImgAsFile.value,
     };
-    console.log(aboutData);
     emit("update-info", aboutData);
     type == "add" ? resetFields() : "";
     showModal.value = false;

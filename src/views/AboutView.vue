@@ -71,7 +71,6 @@ const aboutInfo = ref({
   image: { secure_url: "" },
 });
 const handleUpdateInfo = (newInfo) => {
-  console.log(newInfo);
   if (newInfo.type == "add") {
     addInfo(newInfo);
   } else {
@@ -80,7 +79,6 @@ const handleUpdateInfo = (newInfo) => {
 };
 const editInfo = async (info) => {
   try {
-    console.log(info);
     const formData = createFormData(info);
     if (formData) {
       const response = await axios.patch(
@@ -92,7 +90,6 @@ const editInfo = async (info) => {
           },
         }
       );
-      console.log(response);
       if (response.status == 200) {
         const data = response.data.data;
         aboutInfo.value = {
@@ -112,7 +109,6 @@ const editInfo = async (info) => {
 const createFormData = (info) => {
   const formData = new FormData();
   formData.append("desc", info.description);
-  console.log(info.ImgFile);
   if (info.ImgFile instanceof File) {
     toast.success('image is File')
     formData.append("image", info.ImgFile);
@@ -122,7 +118,6 @@ const createFormData = (info) => {
 const addInfo = async (info) => {
   try {
     const formData = createFormData(info);
-    console.log(info);
     if (formData) {
       const response = await axios.post(
         "https://dashboard-omega-three-28.vercel.app/about",
@@ -133,7 +128,6 @@ const addInfo = async (info) => {
           },
         }
       );
-      console.log(response);
       if (response.status === 200) {
         const savedData = await response.data.data;
         aboutInfo.value = {
@@ -141,7 +135,6 @@ const addInfo = async (info) => {
           image: { secure_url: info.image },
           description: info.description,
         };
-        console.log(aboutInfo.value);
         toast.success("تمت الاضافه بنجاح");
       } else {
         toast.error("حدث خطأ اثناء الاضافه");
@@ -158,7 +151,6 @@ const getAboutData = async () => {
     const response = await axios.get(
       `https://dashboard-omega-three-28.vercel.app/about`
     );
-    console.log(response.data.data);
     if (response.status === 200) {
       const data = response.data.data[0];
       aboutInfo.value = {
@@ -166,14 +158,12 @@ const getAboutData = async () => {
         description: data.desc,
         image: { secure_url: data.image.secure_url },
       };
-      console.log(aboutInfo.value);
     } else {
       toast.error("لاتوجد بيانات قم باضافه بيانات ");
     }
     isLoading.value = false;
   } catch (err) {
     isLoading.value = false;
-    console.log(err.message);
     toast.warning("لا توجد بيانات");
   }
 };

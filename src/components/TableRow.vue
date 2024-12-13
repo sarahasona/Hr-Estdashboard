@@ -49,14 +49,6 @@ import { defineEmits, inject } from "vue";
 import DeleteModal from "./DeleteModal.vue";
 import ServiceModal from "./ServiceModal.vue";
 const emit = defineEmits();
-// const handleEditService = () => {
-//   emit("editService", service);
-//   console.log(`edit service ${service.id}`);
-// };
-const handleDeleteService = () => {
-  console.log(`delete Service ${service.id}`);
-  //   menuStore.removeMealFromCart(mealId);
-};
 </script>
 
 <style>

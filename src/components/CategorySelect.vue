@@ -101,20 +101,17 @@ const selectedCategory = ref(selected || (categoryList?.[0]?._id ?? null));
 if (name == "offer") {
   selectedCategory.value = currentCategory;
 }
-console.log(selected);
 emit("update", selectedCategory.value);
 // Reactive title based on selectedCategory
 const selectedCategoryTitle = computed(() => {
   const category = categoryList?.find(
     (cat) => cat._id === selectedCategory.value
   );
-  console.log(category);
   return category?.name || "Select a category";
 });
 
 // Example watcher (optional)
 watch(selectedCategory, (newValue) => {
-  console.log(newValue);
   if (name == "offer") {
     emit("updateOfferList", newValue);
   }
@@ -176,7 +173,6 @@ const addCategory = async () => {
     { name: editedCategoryTitle.value }
   );
   if (response.status === 200) {
-    console.log(response.data);
     const newCategory = {
       _id: response.data.data,
       name: editedCategoryTitle.value,
@@ -195,14 +191,11 @@ const addCategory = async () => {
 const editCategory = async () => {
   isLoading.value = true;
   categoryError.value = "";
-  console.log(categoryList);
-  console.log(selectedCategory.value);
   const response = await axios.patch(
     `https://dashboard-omega-three-28.vercel.app/Category/${selectedCategory.value}`,
     { name: editedCategoryTitle.value }
   );
   if (response.status == 200) {
-    console.log(response.data);
     categoryError.value = "";
     const categoryIndex = categoryList.findIndex(
       (cat) => cat._id === selectedCategory.value
@@ -226,7 +219,6 @@ const cancelCategoryEditing = () => {
 const resetFields = () => {
   categoryError.value = "";
   selectedCategory.value = categoryList[0]?._id || null;
-  console.log(selectedCategory.value);
   emit("update", selectedCategory.value);
   const selectedCategoryObj = categoryList.find(
     (cat) => cat._id === selectedCategory.value
@@ -239,7 +231,6 @@ const resetSelectCategory = async (catId) => {
     await deletCategory(catId);
     resetFields();
   } catch (error) {
-    console.error(error);
   }
 };
 const deletCategory = async (catId) => {
@@ -255,7 +246,6 @@ const deletCategory = async (catId) => {
       }
     }
   } catch (error) {
-    console.error(error);
     toast.error("حدث خطأ يرجي اعاده المحاوله");
     return;
   }

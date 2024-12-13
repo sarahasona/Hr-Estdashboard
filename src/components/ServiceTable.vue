@@ -38,7 +38,6 @@ import { defineEmits } from "vue";
 const emit = defineEmits();
 const { headers, services } = defineProps(["headers", "services"]);
 const handleDelete = () => {
-  console.log("delete");
   emit('deleteAll')
 };
 </script>
