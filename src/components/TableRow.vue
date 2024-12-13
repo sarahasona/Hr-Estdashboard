@@ -23,11 +23,7 @@
       />
     </fwb-table-cell>
     <fwb-table-cell>
-      <ServiceModal
-        title="تعديل الخدمه  "
-        :serviceObj="service"
-        type="edit"
-      />
+      <ServiceModal title="تعديل الخدمه  " :serviceObj="service" type="edit" />
       <!-- <BiPencil
         :serviceId="service.id"
         @click="handleEditService"
@@ -49,7 +45,7 @@ import {
   FwbTableRow,
 } from "flowbite-vue";
 import { BiPencil } from "vue-icons-plus/bi";
-import { defineEmits,inject } from "vue";
+import { defineEmits, inject } from "vue";
 import DeleteModal from "./DeleteModal.vue";
 import ServiceModal from "./ServiceModal.vue";
 const emit = defineEmits();
@@ -63,4 +59,6 @@ const handleDeleteService = () => {
 };
 </script>
 
-<style lang="scss"></style>
+<style>
+
+</style>

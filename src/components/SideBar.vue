@@ -2,9 +2,9 @@
   <div>
     <!-- BiMenu Icon (Visible only on small screens) -->
     <BiMenuAltLeft
-      v-if="!sideBarOpen"
+      
       @click="toggleSidebar"
-      class="fixed top-4 left-1 z-40 text-blue-500 w-8 h-8 cursor-pointer md:hidden"
+      class="fixed top-4 left-1 z-40 text-blue-500 w-8 h-8 cursor-pointer lg:hidden"
     />
 
     <!-- Sidebar -->
@@ -12,7 +12,7 @@
       :class="[
         'fixed top-0 left-0 h-screen bg-gray-100 border-r z-30 transition-transform duration-300',
         sideBarOpen ? 'translate-x-0' : '-translate-x-full', // Control the sidebar visibility
-        'md:translate-x-0', // Always visible on medium and larger screens
+        'lg:translate-x-0', // Always visible on medium and larger screens
       ]"
       id="main-nav"
     >
@@ -20,7 +20,7 @@
       <div
         class="w-full h-20 border-b flex px-4 items-center mb-8 text-center justify-center"
       >
-        <img src="/logo.png" alt="Logo" class="w-[50px]" />
+        <img src="/logo.png" alt="Logo" class="md:w-[50px] w-[20px] " />
         <!-- Close Button for small screens -->
         <button
           @click="sideBarOpen = false"

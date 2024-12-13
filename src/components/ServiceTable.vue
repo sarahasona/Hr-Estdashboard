@@ -46,9 +46,9 @@ const handleDelete = () => {
 .table-sorting {
   th,
   td {
-    // padding:3px!important;
+    padding:3px!important;
     text-align: right !important;
-    // padding-left: 10px !important;
+    padding-left: 10px !important;
   }
 }
 </style>

@@ -8,7 +8,7 @@ import SideBar from "./components/SideBar.vue";
     <SideBar />
 
     <keep-alive>
-      <RouterView dir="rtl" class="w-[79%] me-auto" />
+      <RouterView dir="rtl" class="md:w-[90%] w-full me-auto" />
     </keep-alive>
   </div>
 </template>
