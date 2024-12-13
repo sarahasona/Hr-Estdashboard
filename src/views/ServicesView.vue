@@ -131,7 +131,8 @@ const handleEditService = async (service) => {
     );
     console.log(response);
     if (response.status === 200) {
-      const data = response.data.data
+      const data = response.data.data;
+      console.log(data)
       toast.success("تم التعديل بنجاح");
       console.log(service);
       const target = serviceList.value.find((ele) => ele._id === service._id);
@@ -141,9 +142,10 @@ const handleEditService = async (service) => {
           _id:service._id,
           title: service.title,
           description: service.description,
-          image: { secure_url: data.secure_url },
+          image: { secure_url: data.image.secure_url },
         });
       }
+      console.log(target)
     } else {
       toast.warning("يرجي المحاوله مره اخري");
     }

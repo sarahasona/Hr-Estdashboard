@@ -28,7 +28,7 @@
               <div class="mt-3 sm:mt-0 sm:ml-4">
                 <div class="mt-2 w-full">
                   <!-- Service Content Body -->
-                  <div v-if="name === 'service'">
+                  <div v-if="name === 'service' || name == 'serviceAll'">
                     <input
                       placeholder="يرجي ادخال عنوان الخدمه"
                       type="text"
@@ -43,7 +43,6 @@
                       {{ titleError }}
                     </div>
                     <textarea
-                      placeholder="يرجي ادخال وصف الخدمه"
                       type="text"
                       class="border border-gray-200 w-full shadow p-2 outline-none mb-2"
                       v-model="localDescription"
@@ -160,8 +159,11 @@ const previewImage = ref("");
 const selectedCat = ref("");
 
 if (name === "service") {
+  console.log('helllo')
+  console.log(serviceObj)
   localTitle.value = serviceObj.title || "";
   localDescription.value = serviceObj.description || "";
+  console.log(localDescription.value)
   previewImage.value = serviceObj.image.secure_url || "";
 }
 console.log("name", name);
@@ -183,6 +185,9 @@ watch(showModal, (newVal) => {
     }
     if (name === "service") {
       previewImage.value = serviceObj.image.secure_url || "";
+      localDescription.value = serviceObj.description;
+      console.log(localDescription.value)
+      localTitle.value = serviceObj.title;
     }
   }
 });
@@ -248,7 +253,7 @@ const addService = () => {
     title: localTitle.value,
     description: localDescription.value,
     image: previewImage.value,
-    ImgFile:imageAsFile.value
+    ImgFile: imageAsFile.value,
   };
 
   // emit(type === "add" ? "addNewService" : "editService", payload);

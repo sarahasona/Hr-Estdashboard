@@ -23,7 +23,7 @@
       </div>
 
       <div
-        class="flex flex-wrap justify-between gap-5 mt-5"
+        class="flex flex-wrap justify-center md:justify-start items-center gap-5 mt-5"
         v-if="offerList.length > 0"
       >
         <OfferCard

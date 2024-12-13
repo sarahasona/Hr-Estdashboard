@@ -23,7 +23,7 @@
       />
     </fwb-table-cell>
     <fwb-table-cell>
-      <ServiceModal title="تعديل الخدمه  " :serviceObj="service" type="edit" />
+      <ServiceModal title="تعديل الخدمه  " :serviceObj="service" type="edit" name="service" />
       <!-- <BiPencil
         :serviceId="service.id"
         @click="handleEditService"
