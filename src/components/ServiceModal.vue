@@ -65,6 +65,7 @@
                       :categoryList="categoryList"
                       @update="handleCategoryChange"
                       :selected="selectedCat"
+                      name="modal"
                     />
                   </div>
                   <div class="flex justify-start mt-5">
@@ -159,34 +160,21 @@ const previewImage = ref("");
 const selectedCat = ref("");
 
 if (name === "service") {
-  console.log('helllo')
-  console.log(serviceObj)
   localTitle.value = serviceObj.title || "";
   localDescription.value = serviceObj.description || "";
-  console.log(localDescription.value)
   previewImage.value = serviceObj.image.secure_url || "";
 }
-console.log("name", name);
-// if (name == "offer") {
-//   console.log('offer')
-//   previewImage.value = offerObj.image.secure_url || "";
-//   selectedCat.value = offerObj.categoryId
-//   console.log(offerObj.categoryId)
-// }
-// Watch modal open state
+
 watch(showModal, (newVal) => {
   if (newVal) {
     // Executes when modal opens
     if (name === "offer") {
-      console.log("offer");
       previewImage.value = offerObj.image.secure_url || "";
       selectedCat.value = offerObj.categoryId;
-      console.log(offerObj.categoryId);
     }
     if (name === "service") {
       previewImage.value = serviceObj.image.secure_url || "";
       localDescription.value = serviceObj.description;
-      console.log(localDescription.value)
       localTitle.value = serviceObj.title;
     }
   }

@@ -133,6 +133,7 @@ const handleEditService = async (service) => {
     if (response.status === 200) {
       const data = response.data.data;
       console.log(data)
+      console.log('ehhehehe')
       toast.success("تم التعديل بنجاح");
       console.log(service);
       const target = serviceList.value.find((ele) => ele._id === service._id);

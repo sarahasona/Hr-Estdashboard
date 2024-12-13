@@ -4,12 +4,15 @@
       <div
         class="border border-gray-200 shadow p-2 cursor-pointer flex items-center"
       >
-        <p class="w-[95%] text-start flex justify-between items-center">
+        <p
+          class="w-[95%] text-start flex justify-between items-center"
+          @click="toggleDropdown"
+        >
           {{ selectedCategoryTitle || "Select a category" }}
-          <BiChevronDown
+          <!-- <BiChevronDown
             class="text-gray-500 cursor-pointer ml-2"
             @click="toggleDropdown"
-          />
+          /> -->
         </p>
         <BiPlus
           class="text-green-500 cursor-pointer rounded-full shadow-lg"
@@ -25,8 +28,8 @@
           :key="category._id"
           class="flex justify-between items-center p-2 hover:bg-gray-100 cursor-pointer"
         >
-        <!--  -->
-          <p @click="selectCategory(category._id)">
+          <!--  -->
+          <p @click="selectCategory(category._id)" class="w-[90%]">
             {{ category.name }}
           </p>
           <div class="flex items-center">
@@ -73,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, provide,computed } from "vue";
+import { ref, watch, defineEmits, provide, computed } from "vue";
 import { FwbSpinner } from "flowbite-vue";
 
 import {
@@ -87,22 +90,34 @@ import DeleteModal from "./DeleteModal.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 const emit = defineEmits();
-const { categoryList,selected } = defineProps(["categoryList","selected"]);
+const { categoryList, selected, currentCategory, name } = defineProps([
+  "categoryList",
+  "selected",
+  "currentCategory",
+  "name",
+]);
 const isLoading = ref(false);
 const selectedCategory = ref(selected || (categoryList?.[0]?._id ?? null));
-console.log(selected)
+if (name == "offer") {
+  selectedCategory.value = currentCategory;
+}
+console.log(selected);
 emit("update", selectedCategory.value);
 // Reactive title based on selectedCategory
 const selectedCategoryTitle = computed(() => {
-  console.log('s')
-  const category = categoryList?.find(cat => cat._id === selectedCategory.value);
-  console.log(category)
+  const category = categoryList?.find(
+    (cat) => cat._id === selectedCategory.value
+  );
+  console.log(category);
   return category?.name || "Select a category";
 });
 
 // Example watcher (optional)
 watch(selectedCategory, (newValue) => {
-  console.log("Category updated to:", newValue, selectedCategoryTitle.value);
+  console.log(newValue);
+  if (name == "offer") {
+    emit("updateOfferList", newValue);
+  }
 });
 
 // select edit

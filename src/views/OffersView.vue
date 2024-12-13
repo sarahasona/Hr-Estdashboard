@@ -19,7 +19,14 @@
     </div>
     <div class="offersWrapper" v-if="!isLoading">
       <div class="categoryList">
-        <CategorySelect :categoryList="categoryList" class="w-[50%]" />
+        <CategorySelect
+          :categoryList="categoryList"
+          class="w-[50%]"
+          :currentCategory="currentCategory"
+          name="offer"
+          v-model="currentCategory"
+          @updateOfferList="handleUpdateOffersList"
+        />
       </div>
 
       <div
@@ -38,7 +45,7 @@
       <div v-else class="flex justify-center items-center min-h-[400px]">
         <p>قم باضافه عروض</p>
       </div>
-      <div v-if="OffersErrorMsg">{{ OfferErrorMsg }}</div>
+      <div v-if="OffersErrorMsg">{{ OffersErrorMsg }}</div>
     </div>
     <div v-else class="flex justify-center items-center min-h-[400px] border">
       <fwb-spinner size="10" color="blue" />
@@ -48,7 +55,7 @@
 
 <style></style>
 <script setup>
-import { ref, provide, onMounted } from "vue";
+import { ref, provide, onMounted ,watch} from "vue";
 import { toast } from "vue3-toastify";
 import { FwbSpinner } from "flowbite-vue";
 import OfferCard from "@/components/OfferCard.vue";
@@ -60,6 +67,8 @@ const offerFilter = ref([]);
 const offerList = ref([]);
 offerFilter.value = offerList.value;
 const categoryList = ref([]);
+const OffersErrorMsg = ref("");
+const currentCategory = ref("");
 const createFormData = (ImgFile) => {
   const formData = new FormData();
   if (ImgFile instanceof File) {
@@ -81,15 +90,16 @@ const handleAddOffer = async (offer) => {
         }
       );
       if (response.status === 200) {
-        console.log(response.data.data);
         const data = response.data.data;
         toast.success("تمت الاضافة بنجاح");
-        offerList.value.push({
+        if(currentCategory.value === offer.categoryId){
+          offerList.value.push({
           _id: data.id,
           image: { secure_url: data.secure_url },
           categoryId: offer.categoryId,
         });
-        console.log(offerList.value);
+        }
+        
       } else {
         toast.warning("يرجي المحاوله مره اخري");
       }
@@ -103,7 +113,6 @@ const handleDeleteAll = () => {
 };
 const handleEditOffer = async (offer) => {
   try {
-    console.log(offer);
 
     const formData = createFormData(offer.ImgFile);
     const response = await axios.patch(
@@ -117,7 +126,6 @@ const handleEditOffer = async (offer) => {
     );
     if (response.status === 200) {
       const data = response.data.data;
-      console.log(response.data.data);
       const target = offerList.value.find((ele) => ele._id === offer._id);
       if (target) {
         Object.assign(target, {
@@ -132,7 +140,6 @@ const handleEditOffer = async (offer) => {
     }
   } catch (error) {
     toast.error("حدث خطأ يرجي المحاوله مره اخري");
-    console.log(error.message);
   }
 };
 const handleDeleteOffer = async (offerId) => {
@@ -170,6 +177,13 @@ provide("offerApi", {
   editCategory: handleEditCategory,
   addOffer: handleAddOffer,
 });
+//watch any change in select list 
+watch(currentCategory, async (newCategoryId) => {
+  if (newCategoryId) {
+    await getCategoryOffersById(newCategoryId);
+  }
+});
+
 // get All Categories
 const getAllCategories = async () => {
   try {
@@ -178,24 +192,28 @@ const getAllCategories = async () => {
       "https://dashboard-omega-three-28.vercel.app/Category/all"
     );
     if (response.status === 200) {
-      console.log(response);
       categoryList.value = response?.data?.data || [];
-      console.log(categoryList.value);
+      if (categoryList.value.length > 0) {
+        currentCategory.value = categoryList.value[0]._id; 
+      } else {
+        OffersErrorMsg.value = "لا يوجد فئات";
+      }
     } else {
-      console.log(response.error);
     }
     isLoading.value = false;
   } catch (err) {
     isLoading.value = false;
-    console.error(err.message);
+    OffersErrorMsg.value = "خطأ في تحميل الفئات";
   }
 };
-const OffersErrorMsg = ref("");
+
+
 const getCategoryOffers = () => {
   OffersErrorMsg.value = "";
   if (categoryList.value.length > 0) {
     // get first category offers
     getCategoryOffersById(categoryList.value[0]._id);
+    currentCategory.value = categoryList.value[0]._id;
   } else {
     OffersErrorMsg.value = "قم باضافه عروض";
   }
@@ -204,23 +222,24 @@ const getCategoryOffersById = async (CatId) => {
   try {
     isLoading.value = true;
     const response = await axios.get(
-      `https://dashboard-omega-three-28.vercel.app/offer/categoryId=${CatId}`
+      `https://dashboard-omega-three-28.vercel.app/offer/${CatId}`
     );
     if (response.status === 200) {
-      console.log(response);
       offerList.value = response.data.data;
-      isLoading.value = false;
     } else {
-      console.log(response.error);
       OffersErrorMsg.value = "لا يوجد عروض بهذا القسم";
-      isLoading.value = false;
     }
+    isLoading.value = false;
+
   } catch (err) {
-    console.error(err.message);
     isLoading.value = false;
     OffersErrorMsg.value = "حدث خطأ في البحث";
   }
 };
+const handleUpdateOffersList = (newCategory)=>{
+  currentCategory.value = newCategory;
+  getCategoryOffersById(newCategory);
+}
 onMounted(async () => {
   await getAllCategories();
   getCategoryOffers();
