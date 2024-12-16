@@ -54,7 +54,7 @@ const createFormData = (service) => {
   const formData = new FormData();
   formData.append("name", service.title);
   formData.append("desc", service.description);
-  if (service.ImgFile instanceof File) {
+  if (service.ImgFile && service.ImgFile instanceof File) {
     formData.append("image", service.ImgFile);
   }
   return formData;
@@ -74,14 +74,15 @@ const handleAddService = async (service) => {
         }
       );
       if (response.status === 200) {
-        const data = response.data;
+        const data = response.data.data;
         toast.success("تمت الاضافة بنجاح");
-        serviceList.value.push({
+        const newService = {
           _id: data.id,
-          image: { secure_url: data.secure_url },
+          image: { secure_url: service.image },
           description: service.description,
           title: service.title,
-        });
+        };
+        serviceList.value.push(newService);
       } else {
         toast.warning("يرجي المحاوله مره اخري");
       }
@@ -98,6 +99,7 @@ const handleDeleteAll = async () => {
     const response = await axios.delete(
       `https://dashboard-omega-three-28.vercel.app/Service/all`
     );
+    console.log(response)
     if (response.status === 200) {
       toast.success("تم حذف الكل بنجاح");
       serviceList.value = [];
@@ -106,6 +108,7 @@ const handleDeleteAll = async () => {
     }
     isLoading.value = false;
   } catch (err) {
+    console.log(err)
     toast.error("حدث خطأ ما, حاول مرة أخرى");
     isLoading.value = false;
   }
@@ -114,31 +117,34 @@ const handleEditService = async (service) => {
   try {
     isLoading.value = true;
     const formData = createFormData(service);
-    const response = await axios.patch(
-      `https://dashboard-omega-three-28.vercel.app/Service/${service._id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    if (formData) {
+      const response = await axios.patch(
+        `https://dashboard-omega-three-28.vercel.app/Service/${service._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status === 200) {
+        const data = response.data.data;
+
+        toast.success("تم التعديل بنجاح");
+        const target = serviceList.value.find((ele) => ele._id === service._id);
+        if (target) {
+          Object.assign(target, {
+            _id: service._id,
+            title: service.title,
+            description: service.description,
+            image: { secure_url: data.secure_url },
+          });
+        }
+      } else {
+        toast.warning("يرجي المحاوله مره اخري");
       }
-    );
-    if (response.status === 200) {
-      const data = response.data.data;
-      toast.success("تم التعديل بنجاح");
-      const target = serviceList.value.find((ele) => ele._id === service._id);
-      if (target) {
-        Object.assign(target, {
-          _id:service._id,
-          title: service.title,
-          description: service.description,
-          image: { secure_url: data.image.secure_url },
-        });
-      }
-    } else {
-      toast.warning("يرجي المحاوله مره اخري");
+      isLoading.value = false;
     }
-    isLoading.value = false;
   } catch (error) {
     isLoading.value = false;
   }

@@ -209,18 +209,20 @@ const offerApi = inject("offerApi");
 
 const addEditData = () => {
   if (name == "service") {
-    if (!localTitle.value || !localDescription.value || !previewImage.value) {
-      if (localTitle.value.length < 2 || localTitle.value.length > 15) {
-        titleError.value = "العنوان يجب أن يكون بين 2 و 15 حروف";
-        return;
-      }
-      if (
-        localDescription.value.length < 10 ||
-        localDescription.value.length > 600
-      ) {
-        descriptionError.value = "الوصف يجب أن يكون بين 10 و 600 حروف";
-        return;
-      }
+    if (!previewImage.value) {
+      return;
+    }
+    if (localTitle.value.length < 2 || localTitle.value.length > 15) {
+      titleError.value = "العنوان يجب أن يكون بين 2 و 15 حروف";
+      return;
+    }
+    titleError.value = "";
+    if (
+      localDescription.value.length < 10 ||
+      localDescription.value.length > 600
+    ) {
+      descriptionError.value = "الوصف يجب أن يكون بين 10 و 600 حروف";
+      return;
     }
     titleError.value = "";
     descriptionError.value = "";
