@@ -66,6 +66,7 @@
                       @update="handleCategoryChange"
                       :selected="selectedCat"
                       name="modal"
+                      :type="type"
                     />
                   </div>
                   <div class="flex justify-start mt-5">
@@ -210,6 +211,7 @@ const offerApi = inject("offerApi");
 const addEditData = () => {
   if (name == "service") {
     if (!previewImage.value) {
+      toast.error("يجب ادخال صوره");
       return;
     }
     if (localTitle.value.length < 2 || localTitle.value.length > 15) {

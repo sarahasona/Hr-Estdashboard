@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="token">
     <!-- BiMenu Icon (Visible only on small screens) -->
     <BiMenuAltLeft
       @click="toggleSidebar"
@@ -31,10 +31,12 @@
         <img src="/logo.png" alt="Logo" class="md:w-[50px] w-[20px]" />
       </div>
       <div class="mb-4 px-4" dir="rtl">
-        <router-link to="about">
+        <router-link to="/dashboard/about">
           <div
             class="w-full gap-2 flex items-center text-blue-400 h-10 pl-4 hover:bg-gray-200 rounded-lg cursor-pointer"
-            :class="route.path === '/about' ? 'bg-gray-200 font-bold' : ''"
+            :class="
+              route.path === '/dashboard/about' ? 'bg-gray-200 font-bold' : ''
+            "
           >
             <svg class="h-6 w-6 fill-current mr-2" viewBox="0 0 20 20">
               <path
@@ -44,10 +46,12 @@
             <span class="text-gray-700">من نحن</span>
           </div>
         </router-link>
-        <router-link to="offers">
+        <router-link to="/dashboard/offers">
           <div
             class="w-full gap-2 flex items-center text-blue-400 h-10 pl-4 hover:bg-gray-200 rounded-lg cursor-pointer"
-            :class="route.path === '/offers' ? 'bg-gray-200 font-bold' : ''"
+            :class="
+              route.path === '/dashboard/offers' ? 'bg-gray-200 font-bold' : ''
+            "
           >
             <svg
               fill="#000000"
@@ -72,10 +76,14 @@
             <span class="text-gray-700">العروض</span>
           </div>
         </router-link>
-        <router-link to="services">
+        <router-link to="/dashboard/services">
           <div
             class="w-full gap-2 flex items-center text-blue-400 h-10 pl-4 hover:bg-gray-200 rounded-lg cursor-pointer"
-            :class="route.path === '/services' ? 'bg-gray-200 font-bold' : ''"
+            :class="
+              route.path === '/dashboard/services'
+                ? 'bg-gray-200 font-bold'
+                : ''
+            "
           >
             <svg class="h-6 w-6 fill-current mr-2" viewBox="0 0 20 20">
               <path
@@ -86,16 +94,32 @@
           </div>
         </router-link>
       </div>
+      <div class="absolute bottom-2 left-1 flex flex-col gap-1">
+        <span @click="handleResetPassword" class="cursor-pointer"
+          >Reset Password</span
+        >
+        <hr />
+        <BiLogOut
+          color="red"
+          @click="handleLogOut"
+          class="cursor-pointer ms-auto"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { BiMenuAltLeft } from "vue-icons-plus/bi";
-
+import { useAuthStore } from "../stores/auth";
+import { storeToRefs } from "pinia";
+import { BiLogOut } from "vue-icons-plus/bi";
+const authStore = useAuthStore();
+const { token } = storeToRefs(authStore);
 const route = useRoute();
+const router = useRouter();
 
 // Control sidebar visibility
 const sideBarOpen = ref(false);
@@ -105,6 +129,12 @@ const closeSidebar = () => {
 // Function to toggle the sidebar
 const toggleSidebar = () => {
   sideBarOpen.value = !sideBarOpen.value;
+};
+const handleLogOut = () => {
+  authStore.userLogOut();
+};
+const handleResetPassword = () => {
+  router.push("/dashboard/resetPassword");
 };
 watch(() => route.path, closeSidebar);
 </script>

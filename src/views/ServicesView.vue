@@ -99,7 +99,6 @@ const handleDeleteAll = async () => {
     const response = await axios.delete(
       `https://dashboard-omega-three-28.vercel.app/Service/all`
     );
-    console.log(response)
     if (response.status === 200) {
       toast.success("تم حذف الكل بنجاح");
       serviceList.value = [];
@@ -108,7 +107,6 @@ const handleDeleteAll = async () => {
     }
     isLoading.value = false;
   } catch (err) {
-    console.log(err)
     toast.error("حدث خطأ ما, حاول مرة أخرى");
     isLoading.value = false;
   }

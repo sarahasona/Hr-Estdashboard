@@ -7,14 +7,12 @@
         <p
           class="w-[95%] text-start flex justify-between items-center"
           @click="toggleDropdown"
+          :readonly="type == 'edit'"
         >
           {{ selectedCategoryTitle || "Select a category" }}
-          <!-- <BiChevronDown
-            class="text-gray-500 cursor-pointer ml-2"
-            @click="toggleDropdown"
-          /> -->
         </p>
         <BiPlus
+          v-if="type != 'edit'"
           class="text-green-500 cursor-pointer rounded-full shadow-lg"
           @click="addNewCategory"
         />
@@ -90,11 +88,12 @@ import DeleteModal from "./DeleteModal.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 const emit = defineEmits();
-const { categoryList, selected, currentCategory, name } = defineProps([
+const { categoryList, selected, currentCategory, name, type } = defineProps([
   "categoryList",
   "selected",
   "currentCategory",
   "name",
+  "type",
 ]);
 const isLoading = ref(false);
 const selectedCategory = ref(selected || (categoryList?.[0]?._id ?? null));
@@ -124,7 +123,9 @@ const isEditingCategory = ref(false);
 
 // Toggle dropdown visibility
 const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value;
+  if (type != "edit") {
+    isDropdownOpen.value = !isDropdownOpen.value;
+  }
 };
 
 // Select a category
@@ -230,8 +231,7 @@ const resetSelectCategory = async (catId) => {
   try {
     await deletCategory(catId);
     resetFields();
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 const deletCategory = async (catId) => {
   try {

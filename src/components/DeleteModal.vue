@@ -82,7 +82,6 @@ const handleDelete = async () => {
   } else if (type == "offer") {
     offerApi.deleteOffer(offerId);
   } else if (type == "serviceAll") {
-    console.log('service All')
     servicesApi.deleteAllServices();
   }
   isDeleteLoading.value = false;
