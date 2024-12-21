@@ -106,7 +106,10 @@ export const useAuthStore = defineStore("auth", () => {
     if (sessionId) {
       try {
         const response = await axios.delete(`${BASE_URL}logout/`, {
-          sessionId: sessionId,
+          headers: {
+            token: `dashApp ${token.value}`,
+          },
+          data: { sessionId },
         });
         if (response.status == 200) {
           localStorage.removeItem("token");
