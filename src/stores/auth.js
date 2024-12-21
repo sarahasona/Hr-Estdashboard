@@ -15,6 +15,7 @@ export const useAuthStore = defineStore("auth", () => {
       if (response.status === 200) {
         token.value = response.data.token;
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("sessionId", response.data.sessionId);
         return true;
       } else {
         toast.error("Invalid credentials!");
@@ -83,31 +84,41 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
   const verifyOtp = async (email, otp) => {
-    try{
+    try {
       const response = await axios.post(`${BASE_URL}verifyOtp/`, {
         email,
         otp,
       });
-      if(response.status ==200){
+      if (response.status == 200) {
         console.log(response);
         toast.success("OTP verified successfully!");
         return true;
-      }
-      else{
+      } else {
         toast.error("Failed to verify OTP!");
         return false;
       }
-    }
-    catch(err){
+    } catch (err) {
       toast.error("Failed to verify OTP!");
       return false;
     }
-   
   };
-  const userLogOut = () => {
-    localStorage.removeItem("token");
-    user.value = null;
-    token.value = null;
+  const userLogOut = async () => {
+    const sessionId = localStorage.getItem("sessionId");
+    if (sessionId) {
+      try {
+        const response = await axios.delete(`${BASE_URL}logout/`, {
+          sessionId: sessionId,
+        });
+        if (response.status == 200) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("sessionId");
+          user.value = null;
+          token.value = null;
+        }
+      } catch (err) {
+        toast.error("Failed to log out!");
+      }
+    }
   };
 
   return {
