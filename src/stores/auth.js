@@ -5,15 +5,13 @@ import { toast } from "vue3-toastify";
 export const useAuthStore = defineStore("auth", () => {
   const user = ref(null);
   const token = ref(localStorage.getItem("token"));
+  const BASE_URL = "https://dashboard-omega-three-28.vercel.app/user/";
   const userLogin = async (userName, password) => {
     try {
-      const response = await axios.post(
-        `https://dashboard-omega-three-28.vercel.app/user/signIn/`,
-        {
-          userName,
-          password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}signIn/`, {
+        userName,
+        password,
+      });
       if (response.status === 200) {
         token.value = response.data.token;
         localStorage.setItem("token", response.data.token);
@@ -29,7 +27,7 @@ export const useAuthStore = defineStore("auth", () => {
   const resetPassword = async (currentPassword, newPassword) => {
     try {
       const response = await axios.put(
-        `https://dashboard-omega-three-28.vercel.app/user/resetPassword/`,
+        `${BASE_URL}resetPassword/`,
         {
           currentPassword,
           newPassword,
@@ -53,14 +51,11 @@ export const useAuthStore = defineStore("auth", () => {
   };
   const forgetPassword = async (email, otp, newPassword) => {
     try {
-      const response = await axios.post(
-        `https://dashboard-omega-three-28.vercel.app/user/forgetPassword/`,
-        {
-          email,
-          otp,
-          newPassword,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}forgetPassword/`, {
+        email,
+        otp,
+        newPassword,
+      });
       if (response.status === 200) {
         toast.success("تم تعديل الباسوورد بنجاح");
         return true;
@@ -75,12 +70,9 @@ export const useAuthStore = defineStore("auth", () => {
   };
   const sendOtpPassword = async (email) => {
     try {
-      const response = await axios.post(
-        `https://dashboard-omega-three-28.vercel.app/user/otpPassword/`,
-        {
-          email,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}otpPassword/`, {
+        email,
+      });
       if (response.status === 200) {
         toast.success("OTP sent successfully!");
         return true;
