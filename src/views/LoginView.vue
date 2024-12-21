@@ -51,13 +51,13 @@
           required
         />
       </div>
-      <div class="mb-4 flex gap-5 items-center justify-center" v-if="login">
+      <div class="mb-4 text-center" v-if="login" dir="ltr">
         <button
           type="button"
           @click="ForgotPassword"
           class="text-sm text-blue-500 hover:underline"
         >
-          نسيان الباسوورد
+          forget password?
         </button>
       </div>
       <div class="flex gap-2 items-center justify-between">
@@ -253,7 +253,6 @@ const handleForgetPassword = async () => {
     );
     isLoading.value = false;
     if (response) {
-      toast.success("تم تغير الباسورد بنجاح");
       resetPage();
       resetFields();
     } else {

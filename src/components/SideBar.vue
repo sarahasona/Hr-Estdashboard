@@ -94,7 +94,7 @@
           </div>
         </router-link>
       </div>
-      <div class="absolute bottom-2 left-1 flex flex-col gap-1">
+      <div class="absolute bottom-[50px] left-1 flex flex-col gap-1">
         <span @click="handleResetPassword" class="cursor-pointer"
           >Reset Password</span
         >

@@ -29,7 +29,7 @@
     <div v-if="!isLoading">
       <div
         v-if="aboutInfo.description"
-        class="mt-5 flex flex-col w-[70%] shadow-xl rounded pt-10 pb-10"
+        class="mt-5 flex flex-col shadow-xl rounded pt-10 pb-10"
       >
         <div class="w-full h-[300px]">
           <img
