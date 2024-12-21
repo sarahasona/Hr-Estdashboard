@@ -90,7 +90,6 @@ export const useAuthStore = defineStore("auth", () => {
         otp,
       });
       if (response.status == 200) {
-        console.log(response);
         toast.success("OTP verified successfully!");
         return true;
       } else {
