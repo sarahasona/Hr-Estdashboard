@@ -30,11 +30,15 @@
       </div>
       <div
         class="mb-4 flex gap-2 items-center justify-between"
-        v-if="fillOtp && !login"
+        v-if="fillOtp && !correctOtp && !otpLoading"
       >
         <OtpComp @otpComplete="handleOtpComplete"></OtpComp>
       </div>
-      <div class="mb-4" v-if="login || (forgetPass && fillOtp)">
+      <div v-if="otpLoading" class="flex justify-center mt-5">
+        <FwbSpinner size="10" color="blue" />
+      </div>
+
+      <div class="mb-4" v-if="login || (forgetPass && correctOtp)">
         <label for="password" class="block text-sm font-medium mb-2">
           كلمه المرور
         </label>
@@ -47,20 +51,6 @@
           required
         />
       </div>
-      <!-- <div class="mb-4" v-if="resetPass">
-        <label for="password" class="block text-sm font-medium mb-2">
-          كلمه المرور الجديده</label
-        >
-        <input
-          v-model="Newpassword"
-          type="password"
-          id="password2"
-          placeholder="Enter your password"
-          class="w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring focus:ring-blue-100"
-          required
-        />
-      </div> -->
-
       <div class="mb-4 flex gap-5 items-center justify-center" v-if="login">
         <button
           type="button"
@@ -69,13 +59,6 @@
         >
           نسيان الباسوورد
         </button>
-        <!-- <button
-          type="button"
-          @click="ResetPassword"
-          class="text-sm text-blue-500 hover:underline"
-        >
-          تغيير الباسوورد
-        </button> -->
       </div>
       <div class="flex gap-2 items-center justify-between">
         <ButtonComp title="Login" @submit="handleLogin" v-if="login" />
@@ -94,7 +77,7 @@
         <ButtonComp
           title="حفظ"
           @submit="handleForgetPassword"
-          v-if="forgetPass && fillOtp"
+          v-if="forgetPass && correctOtp"
           :isLoading="isLoading"
         />
         <button
@@ -121,6 +104,7 @@ import OtpComp from "../components/login/OtpComp.vue";
 import { ref } from "vue";
 import ButtonComp from "../components/login/ButtonComp.vue";
 import { toast } from "vue3-toastify";
+import { FwbSpinner } from "flowbite-vue";
 const authStore = useAuthStore();
 const router = useRouter();
 const login = ref(true);
@@ -217,6 +201,8 @@ const resetFields = () => {
   email.value = "";
   isLoading.value = false;
   fillOtp.value = false;
+  correctOtp.value = false;
+  otpLoading.value = false;
 };
 const reset = () => {
   resetFields();
@@ -229,8 +215,20 @@ function validatePassword(password) {
   return passwordRegex.test(password);
 }
 const otp = ref("");
-const handleOtpComplete = (value) => {
+const otpLoading = ref(false);
+const correctOtp = ref(false);
+const handleOtpComplete = async (value) => {
   otp.value = value;
+  otpLoading.value = true;
+  const response = await authStore.verifyOtp(email.value, otp.value);
+  otpLoading.value = false;
+  if (response) {
+    correctOtp.value = true;
+    return;
+  } else {
+    correctOtp.value = false;
+    return;
+  }
 };
 const handleForgetPassword = async () => {
   try {

@@ -82,6 +82,28 @@ export const useAuthStore = defineStore("auth", () => {
       return false;
     }
   };
+  const verifyOtp = async (email, otp) => {
+    try{
+      const response = await axios.post(`${BASE_URL}verifyOtp/`, {
+        email,
+        otp,
+      });
+      if(response.status ==200){
+        console.log(response);
+        toast.success("OTP verified successfully!");
+        return true;
+      }
+      else{
+        toast.error("Failed to verify OTP!");
+        return false;
+      }
+    }
+    catch(err){
+      toast.error("Failed to verify OTP!");
+      return false;
+    }
+   
+  };
   const userLogOut = () => {
     localStorage.removeItem("token");
     user.value = null;
@@ -96,5 +118,6 @@ export const useAuthStore = defineStore("auth", () => {
     resetPassword,
     forgetPassword,
     sendOtpPassword,
+    verifyOtp,
   };
 });

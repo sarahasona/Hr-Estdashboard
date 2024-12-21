@@ -31,8 +31,6 @@ const handleOnComplete = (value) => {
 const clearInput = () => {
   otpInput.value?.clearInput();
 };
-
-
 </script>
 
 <style scoped>
