@@ -55,12 +55,20 @@ const router = createRouter({
   ],
 });
 // Navigation Guard
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   // Redirect to login if route requires auth and no token
   if (to.meta.requiresAuth && !authStore.token) {
     return next("/login");
   }
+  const isValidToken = await authStore.valideToken();
+  if (to.meta.requiresAuth && !isValidToken) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("sessionId");
+    authStore.token = null;
+    return next("/login");
+  }
+
   if ((to.path === "/" || to.path === "/login") && authStore.token) {
     return next("/dashboard");
   }

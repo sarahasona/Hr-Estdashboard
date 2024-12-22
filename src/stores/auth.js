@@ -122,6 +122,23 @@ export const useAuthStore = defineStore("auth", () => {
       }
     }
   };
+  const valideToken = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}me/`, {
+        headers: {
+          token: `dashApp ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.status == 200) {
+        return true;
+      }
+    } catch (err) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("sessionId");
+      token.value = null;
+      return false;
+    }
+  };
 
   return {
     user,
@@ -132,5 +149,6 @@ export const useAuthStore = defineStore("auth", () => {
     forgetPassword,
     sendOtpPassword,
     verifyOtp,
+    valideToken,
   };
 });
